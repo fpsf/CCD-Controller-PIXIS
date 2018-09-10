@@ -1,0 +1,8 @@
+[Camera]
+Gain=2
+Temperature=-70
+ShootingTime=300
+TimeBetweenPhotos=15
+Binning=1
+ExposureTime=5
+ImagesPath=C:/Users/user/Pictures/testes_pixis

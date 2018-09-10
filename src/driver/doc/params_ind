@@ -1,0 +1,78 @@
+This file simply lists the parameters available to the PIXIS 1024 CCD Camera, unlike the params_doc file,
+which provides documented information on these parameters.
+
+This file with two purposes: to summarize the contents of the params_doc file and to save coding time
+for the parameter obtaining tests on the main driver class.
+
+Class 0:
+
+    PARAM_DD_VERSION
+
+Class 2:
+
+    CCD Clearing:
+
+        PARAM_CLEAR_CYCLES,
+        PARAM_CLEAR_MODE,
+        PARAM_MIN_BLOCK,
+        PARAM_NUM_MIN_BLOCK,
+        PARAM_NUM_OF_STRIPS_PER_CLR,
+        PARAM_SKIP_AT_ONCE_BLK
+
+    Temperature Control:
+
+        PARAM_COOLING_MODE,
+        PARAM_HEAD_COOLING_CTRL,
+        PARAM_TEMP,
+        PARAM_TEMP_SETPOINT
+
+    CCD Physical Attributes:
+
+        PARAM_CUSTOM_CHIP,
+        PARAM_FTSCAN,
+        PARAM_PAR_SIZE,
+        PARAM_PIX_PAR_DIST,
+        PARAM_PIX_PAR_SIZE,
+        PARAM_PIX_SER_DIST,
+        PARAM_PIX_SER_SIZE,
+        PARAM_POSTMASK,
+        PARAM_POSTSCAN,
+        PARAM_PIX_TIME,
+        PARAM_PREMASK,
+        PARAM_PRESCAN,
+        PARAM_SER_SIZE
+
+    CCD Readout:
+
+        PARAM_CUSTOM_TIMING,
+        PARAM_EDGE_TRIGGER,
+        PARAM_PAR_SHIFT_TIME,
+        PARAM_PMODE,
+        PARAM_READOUT_PORT,
+        PARAM_READOUT_TIME,
+        PARAM_SER_SHIFT_TIME
+
+    ADC Attributes:
+
+        PARAM_ADC_OFFSET,
+        PARAM_BIT_DEPTH,
+        PARAM_SPDTAB_INDEX
+
+    Other:
+
+        PARAM_GAIN_INDEX, # Gain
+        PARAM_LOGIC_OUTPUT, # I/O
+        PARAM_CHIP_NAME, # Other
+        PARAM_CONTROLLER_ALIVE, # Other
+
+Class 3:
+
+    PARAM_BOF_EOF_CLR,
+    PARAM_EXP_RES,
+    PARAM_BOF_EOF_COUNT,
+    PARAM_EXP_RES_INDEX,
+    PARAM_BOF_EOF_ENABLE,
+    PARAM_EXP_TIME,
+    PARAM_CIRC_BUFFER,
+    PARAM_HW_AUTOSTOP,
+    PARAM_HW_AUTOSTOP32,

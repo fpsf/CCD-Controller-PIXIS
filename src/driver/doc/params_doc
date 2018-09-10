@@ -1,0 +1,596 @@
+This file contains a list of PVCAM parameters available to the Princeton Instruments' PIXIS 1024
+CCD Camera, tested and taken from the PVCAM SDK User Manual:
+ftp://ftp.piacton.com/Public/Manuals/Princeton%20Instruments/PVCAM%202.7%20Software%20User%20Manual.pdf
+
+The parameters' values can be obtained by calling pl_get_param(), pl_get_enum_param(),
+and pl_enum_str_length() functions. The CCDPixis class in the pvcam_pixis Python file has a method
+for using the first one only, which is get_param.
+
+If a certain parameter has writing permissions, its value can be changed with the pl_set_param() call.
+In the CCDPixis class in the pvcam_pixis Python file, this call is made in the set_param method.
+
+To see a summary of the parameters included in this file, see the params_ind file.
+
+
+CLASS 0 PARAMETERS:
+
+    PARAM_DD_VERSION:
+
+        Returns a version number for the device driver used to access the camera hcam. The version
+        is a formatted hexadecimal number, of the style:
+
+        high byte             low byte
+        ------------ ------------ -------------
+                        hi nibble low nibble
+        major version minor version trivial version
+
+        For example, the number 0xB1C0 indicates major release 177, minor release 12, and
+        trivialchange 0.
+
+        A major release is defined as anything that alters the user interface, calling sequence,
+        or parameter interpretation of any device driver interface function
+        (anything that would alter the driver's API). A new major release often requires the
+        calling software to change, but wherever possible, major releases are backward compatible
+        with earlier releases.
+
+        A minor release should be completely transparent to higher level software, but may include
+        internal enhancements. A trivial change is reserved for use by the software staff to keep
+        track of extremely minor variations. The last digit may also be used to flag versions of
+        the driver constructed for unique customers or situations. Minor and trivial releases
+        should require no change in the calling software.
+
+        Open the camera before calling this parameter. Note that different cameras on the same
+        system may use different drivers. Thus, each camera can have its own driver, and its own
+        driver version.
+
+        Datatype: uns16
+
+        Permission: Reading Only
+
+CLASS 2 PARAMETERS:
+
+    CCD Clearing:
+
+        PARAM_CLEAR_CYCLES:
+
+            This is the number of times the CCD must be cleared to completely remove charge from
+            the parallel register.
+
+            Datatype: uns16
+
+            Permission: Reading and Writing
+
+        PARAM_CLEAR_MODE:
+
+            This defines when clearing takes place. See enum below for possible values.
+
+            CLEAR_NEVER
+            CLEAR_PRE_EXPOSURE
+            CLEAR_PRE_SEQUENCE
+            CLEAR_POST_SEQUENCE
+            CLEAR_PRE_POST_SEQUENCE
+            CLEAR_PRE_EXPOSURE_POST_SEQ
+
+            CLEAR_NEVER Don't ever clear the CCD.
+
+            CLEAR_PRE_EXPOSURE Clear clear_cycles times before each exposure starts.
+
+            CLEAR_PRE_SEQUENCE Clear clear_cycles times before the sequence starts.
+
+            CLEAR_POST_SEQUENCE Do continuous clearing after the sequence ends.
+
+            CLEAR_PRE_POST_SEQUENCE Clear clear_cycles times before the sequence starts and
+            continuous clearing after the sequence ends.
+
+            CLEAR_PRE_EXPOSURE_POST_SEQ Clear clear_cycles times before each exposure starts and
+            continuous clearing after the sequence ends.
+
+            The CLEAR_NEVER setting is particularly useful for performing a readout after an
+            exposure has been aborted.
+
+            Note that normally during the idle period, the CCS parallel clock drivers and serial
+            drivers revert to a low power state. This saves on both power and heat.
+            If any CLEAR_..._POST options are used, these systems will not enter low power mode.
+            This will generate extra heat in both the electronics unit and the camera head.
+
+            Datatype: enum
+
+            Permission: Reading Only
+
+        PARAM_MIN_BLOCK:
+
+            This is the CCD skip parameter for the amount to group on the shift register and throw away.
+
+            Datatype: int16
+
+            Permission: Reading and Writing
+
+        PARAM_NUM_MIN_BLOCK:
+
+            This is the CCD skip parameter for the number of minimum block groups to use before valid data.
+
+            Datatype: int16
+
+            Permission: Reading and Writing
+
+        PARAM_NUM_OF_STRIPS_PER_CLR:
+
+            This is the CCD skip parameter for the number of strips per clear. Used to define how many
+            clears to use for continuous clears and used with clears to define the clear area at the
+            beginning of an experiment.
+
+            Datatype: int16
+
+            Permission: Reading and Writing
+
+        PARAM_SKIP_AT_ONCE_BLK:
+
+            Sets the size of rows skipped at once for PI brand cameras. This is one method to control
+            discard of unwanted areas (outside of ROIs).
+
+            Datatype: int32
+
+            Permission: Reading and Writing
+
+    Temperature Control:
+
+        PARAM_COOLING_MODE:
+
+            This is the type of cooling used by the current camera. See enum below for possible values.
+
+            NORMAL_COOL=TE_COOLED
+            CRYO_COOL=LN_COOLED
+
+            NORMAL_COOL This is a thermo-electrically (TE)-cooled camera with air or liquid assisted
+            cooling.
+            CRYO_COOL The camera is cryogenically cooled. A camera cooled via Liquid Nitrogen (LN) in
+            an attached Dewar is an example of a cryo-cooled camera.
+
+            Datatype: enum
+
+            Permission: Reading Only
+
+        PARAM_HEAD_COOLING_CTRL:
+
+            Turns TE cooling on or off. Possible values:
+
+            HEAD_COOLING_CTRL_ON
+            HEAD_COOLING_CTRL_OFF
+
+            Datatype: enum
+
+            Permission: Reading and Writing
+
+        PARAM_TEMP:
+
+            Returns the current measured temperature of the CCD in C°x 100. For example, a temperature of
+            minus 35° would be read as -3500.
+
+            Datatype: int16
+
+            Permission: Reading Only
+
+        PARAM_TEMP_SETPOINT:
+
+            Sets the desired CCD temperature in hundredths of degrees Celsius (minus 35 °C is
+            represented as -3500). The hardware attempts to heat or cool the CCD to this temperature.
+            The min/max allowable temperatures are given ATTR_MIN and ATTR_MAX. Settings outside this
+            range are ignored. Note that this function only sets the desired temperature. Even if the
+            desired temperature is in a legal range, it still may be impossible to achieve. If the
+            ambient temperature is too high, it is difficult to get much cooling on an air-cooled camera.
+
+            Datatype: int16
+
+            Permission: Reading and Writing
+
+    CCD Physical Attributes (All of these can only be read, with the exception of PARAM_CUSTOM_CHIP):
+
+        PARAM_CUSTOM_CHIP:
+
+            Enables the custom chip option. This option allows the user to change the CCD's dimensions in
+            software. The ROI setting after the custom chip has been defined are based on the custom chip
+            dimensions, not on the the actual physical dimensions of the array. This feature enables
+            over-scans, TDI (Time-delay integration) data acquisitions, and virtual chip operations.
+
+            When the custom chip option is enabled, the ATTR_ACCESS of the following parameters changes from
+            ACC_READ_ONLY to ACC_READ_WRITE:
+
+            PARAM_PREMASK PARAM_PRESCAM
+            PARAM_POSTMASK PARAM_POSTSCAN
+            PARAM_PAR_SIZE PARAM_SER_SIZE
+
+            Datatype: rs_bool
+
+            Permission: Reading and Writing
+
+        PARAM_FTSCAN:
+
+            This is the number of frame transfer dummies between the active and masked areas.
+
+            Datatype: uns16
+
+        PARAM_PAR_SIZE:
+
+            This is the parallel size of the CCD, in active rows. The full size of the parallel
+            register is actually (par_size + premask + postmask). When the custom chip option is
+            enabled, the ATTR_ACCESS of the following parameters changes from ACC_READ_ONLY to
+            ACC_READ_WRITE.
+
+            Datatype: uns16
+
+        PARAM_PIX_PAR_DIST:
+
+            This is the center-to-center distance between pixels (in the parallel direction) measured
+            in nanometers. This is identical to PARAM_PIX_PAR_SIZE if there are no interpixel dead areas.
+
+            Datatype: uns16
+
+        PARAM_PIX_PAR_SIZE:
+
+            This is the size of the active area of a pixel, in the parallel direction, measured in
+            nanometers.
+
+            Datatype: uns16
+
+        PARAM_PIX_SER_DIST:
+
+            This is the center-to-center distance between pixels (in the serial direction), in
+            nanometers. This is identical to PARAM_PIX_SER_SIZE, if there are no dead areas.
+
+            Datatype: uns16
+
+        PARAM_PIX_SER_SIZE:
+
+            This is the size of a single pixel‘s active area, in the serial direction, measured in
+            nanometers.
+
+            Datatype: uns16
+
+        PARAM_POSTMASK:
+
+            This is the number of masked lines at the far end of the parallel register (away from the
+            serial register). This is the number of additional parallel shifts that need to be done
+            after readout to clear the parallel register. When the custom chip option is enabled,
+            the ATTR_ACCESS of the following parameters changes from ACC_READ_ONLY to ACC_READ_WRITE.
+
+            Datatype: uns16
+
+        PARAM_POSTSCAN:
+
+            This is the number of pixels to discard from the serial register after the last real data
+            pixel. These must be read or discarded to clear the serial register. When the custom chip
+            option is enabled, the ATTR_ACCESS of the following parameters changes from ACC_READ_ONLY
+            to ACC_READ_WRITE.
+
+            Datatype: uns16
+
+        PARAM_PIX_TIME:
+
+            This is the actual speed for the currently selected speed choice. It returns the time for
+            each pixel, in nanoseconds. This readout time will change as new speed choices are selected.
+
+            Datatype: uns16
+
+        PARAM_PREMASK:
+
+            This is the number of masked lines at the near end of the parallel register, next to the
+            serial register. 0=no mask (no normal mask). If the premask is equal to par_size, this
+            probably indicates a frame transfer device with an ordinary mask. Accordingly, the CCD
+            should probably be run in frame transfer mode. When the custom chip option is enabled,
+            the ATTR_ACCESS of the following parameters changes from ACC_READ_ONLY to ACC_READ_WRITE.
+
+            Datatype: uns16
+
+        PARAM_PRESCAN:
+
+            This is the number of pixels discarded from the serial register before the first real data
+            pixel. When the custom chip option is enabled, the ATTR_ACCESS of the following parameters
+            changes from ACC_READ_ONLY to ACC_READ_WRITE.
+
+            Datatype: uns16
+
+        PARAM_SER_SIZE:
+
+            Defines the serial-dimension of the active area of the CCD chip. When the custom chip
+            option is enabled, the ATTR_ACCESS of the following parameters changes from ACC_READ_ONLY
+            to ACC_READ_WRITE.
+
+            Datatype: uns16
+
+    PARAM_GAIN_INDEX:
+
+       Gain setting for the current speed choice. The valid range for a gain setting is 1 through
+       PARAM_GAIN_INDEX with ATTR_MAX, where the max gain may be as high as 16. Values outside this
+       range will be ignored. Note that gain settings may not be linear! Values 1-16 may not
+       correspond to 1x - 16x, and there are holes between the values. However, when the camera is
+       initialized, and every time a new speed is selected, the system will always reset to run at a
+       gain of 1x.
+
+       Datatype: int16
+
+       Permission: Reading and Writing
+
+    PARAM_LOGIC_OUTPUT (Camera Dependent):
+
+       Kinds of output are:
+
+       OUTPUT_NOT_SCAN
+       OUTPUT_SHUTTER
+       OUTPUT_NOT_RDY
+       OUTPUT_LOGIC0
+       OUTPUT_CLEARING
+       OUTPUT_NOT_FT_IMAGE_SHIFT
+       OUTPUT_RESERVED
+       OUTPUT_EXPOSE_PROG
+       OUTPUT_EXPOSE
+       OUTPUT_IMAGE_SHIFT
+       OUTPUT_READOUT
+       OUTPUT_ACQUIRING
+       OUTPUT_WAIT_FOR_TRIG
+
+       Datatype: enum
+
+       Permission: Reading Only
+
+    CCD Readout:
+
+        PARAM_CUSTOM_TIMING (Camera Dependent):
+
+            Enables the custom timing option. This option allows the user to change the shift time.
+            This capability is mostly used for kinetics operation but may also be used with frame
+            transfer chips. Readout time will be recalculated for the new speed. PARAM-PAR_SHIFT_TIME
+            and PARAM_SER_SHIFT_TIME are the params used to change the shift time.
+
+            Datatype: rs_bool
+
+            Permission: Reading and Writing
+
+        PARAM_EDGE_TRIGGER (Camera Dependent):
+
+            Does not apply to all cameras. Edge Trigger defines whether the external sync trigger is
+            positive or negative edge active. This is for the ST133 family (1 and 5 MHz) and PentaMAX V5.0.
+
+            Possible values:
+            EDGE_TRIG_POS=2
+            EDGE_TRIG_NEG
+
+            Note: The ATTR_AVAIL attribute can be used to tell the application if this feature is supported.
+
+            Datatype: enum
+
+            Permission: Reading and Writing
+
+        PARAM_PAR_SHIFT_TIME (Camera Dependent):
+
+            This is the parallel shift time that can be changed after custom timing has been enabled
+            (PARAM_CUSTOM_TIMING). The time must fall with the ATTR_MIN and ATTR_MAX and the
+            ATTR_INCREMENT or a multiple of the increment that falls within the minimum and maximum
+            values. Increments are in terms of nanoseconds.
+
+            See also PARAM_SER_SHIFT_TIME.
+
+            Datatype: int16
+
+            Permission: Reading Only
+
+        PARAM_PMODE:
+
+            This allows the user to select the parallel clocking method. Possible values are:
+
+            PMODE_NORMAL
+            PMODE_FT
+            PMODE_INTERLINE
+            PMODE_KINETICS
+            PMODE_MPP
+            PMODE_FT_MPP
+            PMODE_ALT_NORMAL
+            PMODE_ALT_FT
+            PMODE_ALT_MPP
+            PMODE_ALT_FT_MPP
+            PMODE_DIF
+            PMODE_SPECTRA_KINETICS
+
+            where FT indicates frame transfer mode, FT_MPP indicates both frame transfer and MPP mode.
+            ALT indicates that custom parameters may be loaded.
+
+            Datatype: enum
+
+            Permission: Reading and Writing
+
+        PARAM_READOUT_PORT (Camera Dependent):
+
+            CCD readout port being used by the currently selected speed. Different readout ports
+            (used for alternate speeds) flip the image in serial, parallel, or both.
+
+            READOUT_PORT_MULT_GAIN
+            READOUT_PORT_NORMAL
+            READOUT_PORT_LOW_NOISE
+            READOUT_PORT_HIGH_CAP
+
+            Use PARAM_READOUT_PORT with ATTR_COUNT to read out the number of ports on the system.
+
+            Datatype: enum
+
+            Permission: Reading Only
+
+        PARAM_READOUT_TIME (Camera Dependent):
+
+            Readout time of current ROI, in ms.
+
+            Datatype: flt64
+
+            Permission: Reading Only
+
+        PARAM_SER_SHIFT_TIME (Camera Dependent):
+
+            This is the serial shift time that can be changed after custom timing has been enabled
+            (PARAM_CUSTOM_TIMING). The time must fall with the ATTR_MIN and ATTR_MAX and the
+            ATTR_INCREMENT or a multiple of the increment that falls within the minimum and maximum
+            values. Increments are in terms of nanoseconds.
+
+            See also PARAM_PAR_SHIFT_TIME.
+
+            Datatype: int16
+
+            Permission: Reading Only
+
+    ADC Attributes:
+
+        PARAM_ADC_OFFSET (Camera Dependent):
+
+            Bias offset voltage. The units do not correspond to the output pixel values in any simple
+            fashion (the conversion rate should be linear, but may differ from system to system) but a
+            lower offset voltage will yield a lower value for all output pixels. Pixels brought below
+            zero by this method will be clipped at zero. Pixels raised above saturation will be clipped
+            at saturation. Before you can change the offset level, you must read the current offset
+            level. The default offset level will also vary from system to system and may change with
+            each speed and gain setting.
+
+            Note: THIS VALUE IS SET AT THE FACTORY AND SHOULD NOT BE CHANGED. If you would like to
+            change this value, please contact customer service before doing so.
+
+            Datatype: int16
+
+            Permission: Reading Only
+
+        PARAM_BIT_DEPTH:
+
+            Number of bits output by the currently selected speed choice. Although this number might
+            range between 6 and 16, the data will always be returned in an unsigned 16-bit word.
+            This value indicates the number of valid bits within that word.
+
+            Datatype: int16
+
+            Permission: Reading Only
+
+        PARAM_SPDTAB_INDEX:
+
+            This selects the CCD readout speed from a table of available choices. Entries are 0-based,
+            so the range of possible values is 0 to max_entries-1; max_entries can be determined using
+            PARAM_SPDTAB_INDEX with the ATTR_MAX attribute. This setting relates to other speed table
+            values, including PARAM_BIT_DEPTH, PARAM_PIX_TIME, PARAM_READOUT_PORT and PARAM_GAIN_INDEX.
+            After setting PARAM_SPDTAB_INDEX, the gain setting is always reset to a value corresponding
+            to 1x gain. To use a different gain setting, call pl_set_param with PARAM_GAIN_INDEX after
+            setting the speed table index.
+
+            Datatype: int16
+
+            Permission: Reading and Writing
+
+    Other (Reading Only):
+
+        PARAM_CHIP_NAME:
+
+            The name of the CCD. The name is a null-terminated text string. The user must pass in a
+            character array that is at least CCD_NAME_LEN elements long.
+
+            Datatype: char_ptr
+
+        PARAM_CONTROLLER_ALIVE:
+
+            This is a general parameter that checks to see if the controller is on and running.
+            Returns a TRUE if the controller is "alive".
+
+            Datatype: rs_bool
+
+
+CLASS 3 PARAMETERS:
+
+    PARAM_BOF_EOF_CLR:
+
+        Clears the BOF-EOF count when a pl_set_param is performed. This is a write-only parameter.
+
+        Datatype: rs_bool
+
+        Permission: Writing Only
+
+    PARAM_EXP_RES:
+
+        Gets the resolution for the current resolution index, as described for PARAM_EXP_RES_INDEX.
+        This value is an enumerated type, representing the resolution. Possible values are :
+
+        EXP_RES_ONE_MILLISEC
+        EXP_RES_ONE_MICROSEC
+        EXP_RES_ONE_SEC
+
+        Datatype: enum
+
+        Permission: Reading Only
+
+    PARAM_BOF_EOF_COUNT:
+
+        Returns the Begin-Of-Frame and/or End-Of-Frame count. BOF_EOF counting is enabled and configured
+        with PARAM_BOF_EOF_ENABLE.
+
+        Datatype: uns32
+
+        Permission: Reading Only
+
+    PARAM_EXP_RES_INDEX:
+
+        Gets and sets the index into the exposure resolution table for the camera. The table contains
+        the resolutions supported by the camera. The value at this index (PARAM_EXP_RES) is an
+        enumerated type as given by PARAM_EXP_RES. The number of supported resolutions can be obtained
+        by using the ATTR_MIN and ATTR_MAX attributes with the PARAM_EXP_RES_INDEX parameter.
+
+        Datatype: uns16
+
+        Permission: Reading and Writing
+
+    PARAM_BOF_EOF_ENABLE:
+
+        Enables and configures the BOF_EOF interrupts. Possible values are:
+
+        NO_FRAME_IRQS
+        BEGIN_FRAME_IRQS
+        END_FRAME_IRQS
+        BEGIN_END_FRAME_IRQS
+
+        Datatype: enum
+
+        Permission: Reading and Writing
+
+    PARAM_EXP_TIME:
+
+        This is used to examine and change the exposure time in VARIABLE_TIMED_MODE.
+
+        Datatype: uns16
+
+        Permission: Reading and Writing
+
+    ???
+    PARAM_CIRC_BUFFER:
+
+        Tests to see if the hardware/software can perform circular buffer. When a TRUE is returned,
+        the circular buffer function can be used.
+
+        Datatype: rs_bool
+
+        Permission:  Unknown Access
+    ???
+
+    PARAM_HW_AUTOSTOP:
+
+        Sets the number of frames to acquire synchronously into a register for PI brand cameras.
+        At the data acquisition, the hardware counts the number of frames transferred, then stops the
+        acquisition when it reaches the count set with PARAM_HW_AUTOSTOP. The maximum number the
+        application can set is 254. If an application needs more than 254, it must set it to ZERO,
+        i.e., a continuous acquisition and issue the STOP command manually to halt the acquisition.
+        For focusing mode, an application should set this parameter to ZERO.
+
+        Datatype: int16
+
+        Permission: Reading and Writing
+
+    PARAM_HW_AUTOSTOP32:
+        Sets the number of frames to acquire synchronously into a register for PI brand cameras.
+        At the data acquisition, the hardware counts the number of frames transferred, then stops the
+        acquisition when it reaches the count set with PARAM_HW_AUTOSTOP32. Query ATTR_MAX to find the
+        maximum number supported by the camera. If an application needs more than ATTR_MAX, it must set
+        it to ZERO, i.e., a continuous acquisition and issue the STOP command manually to halt the
+        acquisition. For focusing mode, an application should set this parameter to ZERO.
+
+        Datatype: int32
+
+        Permission: Reading and Writing
+
