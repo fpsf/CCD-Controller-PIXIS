@@ -1,0 +1,11 @@
+<RCC>
+  <qresource prefix="icons">
+    <file>icons/Run_Automatic.png</file>
+    <file>icons/Run_Manual.png</file>
+    <file>icons/Stop.png</file>
+    <file>icons/Settings.png</file>
+    <file>icons/Exit.png</file>
+    <file>icons/Connect.png</file>
+    <file>icons/Disconnect.png</file>
+  </qresource>
+</RCC>

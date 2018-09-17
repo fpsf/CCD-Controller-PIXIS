@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>408</width>
+    <width>464</width>
     <height>268</height>
    </rect>
   </property>
@@ -102,8 +102,8 @@ background-color: rgb(0, 0, 0);</string>
   </widget>
   <action name="actionConnect">
    <property name="icon">
-    <iconset resource="nrf.qrc">
-     <normaloff>:/newPrefix/Connect.png</normaloff>:/newPrefix/Connect.png</iconset>
+    <iconset resource="pixis_rf.qrc">
+     <normaloff>:/icons/icons/Connect.png</normaloff>:/icons/icons/Connect.png</iconset>
    </property>
    <property name="text">
     <string>Connect</string>
@@ -114,8 +114,8 @@ background-color: rgb(0, 0, 0);</string>
   </action>
   <action name="actionDisconnect">
    <property name="icon">
-    <iconset resource="nrf.qrc">
-     <normaloff>:/newPrefix/Disconnect.png</normaloff>:/newPrefix/Disconnect.png</iconset>
+    <iconset resource="pixis_rf.qrc">
+     <normaloff>:/icons/icons/Disconnect.png</normaloff>:/icons/icons/Disconnect.png</iconset>
    </property>
    <property name="text">
     <string>Disconnect</string>
@@ -126,8 +126,8 @@ background-color: rgb(0, 0, 0);</string>
   </action>
   <action name="actionRun">
    <property name="icon">
-    <iconset resource="nrf.qrc">
-     <normaloff>:/newPrefix/Run_Manual.png</normaloff>:/newPrefix/Run_Manual.png</iconset>
+    <iconset resource="pixis_rf.qrc">
+     <normaloff>:/icons/icons/Run_Manual.png</normaloff>:/icons/icons/Run_Manual.png</iconset>
    </property>
    <property name="text">
     <string>Run</string>
@@ -138,8 +138,8 @@ background-color: rgb(0, 0, 0);</string>
   </action>
   <action name="actionStop">
    <property name="icon">
-    <iconset resource="nrf.qrc">
-     <normaloff>:/newPrefix/Stop.png</normaloff>:/newPrefix/Stop.png</iconset>
+    <iconset resource="pixis_rf.qrc">
+     <normaloff>:/icons/icons/Stop.png</normaloff>:/icons/icons/Stop.png</iconset>
    </property>
    <property name="text">
     <string>Stop</string>
@@ -150,8 +150,8 @@ background-color: rgb(0, 0, 0);</string>
   </action>
   <action name="actionSettings">
    <property name="icon">
-    <iconset resource="nrf.qrc">
-     <normaloff>:/newPrefix/Settings.png</normaloff>:/newPrefix/Settings.png</iconset>
+    <iconset>
+     <normaloff>icons/Settings.png</normaloff>icons/Settings.png</iconset>
    </property>
    <property name="text">
     <string>Settings</string>
@@ -162,8 +162,8 @@ background-color: rgb(0, 0, 0);</string>
   </action>
   <action name="actionExit">
    <property name="icon">
-    <iconset resource="nrf.qrc">
-     <normaloff>:/newPrefix/Exit.png</normaloff>:/newPrefix/Exit.png</iconset>
+    <iconset resource="pixis_rf.qrc">
+     <normaloff>:/icons/icons/Exit.png</normaloff>:/icons/icons/Exit.png</iconset>
    </property>
    <property name="text">
     <string>Exit</string>
@@ -182,7 +182,7 @@ background-color: rgb(0, 0, 0);</string>
   </action>
  </widget>
  <resources>
-  <include location="nrf.qrc"/>
+  <include location="pixis_rf.qrc"/>
  </resources>
  <connections/>
 </ui>
