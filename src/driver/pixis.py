@@ -37,6 +37,7 @@ NOTE:
 
 # ### Required Python Modules:
 import datetime
+import os
 
 import numpy
 from ctypes import *
@@ -71,7 +72,17 @@ class CCDPixis:
         """
         self.pv = pv
         self._hcam = None
-        self.pvcam = WinDLL("pvcam32")
+        if os.name == "nt":
+            self.pvcam = WinDLL("pvcam32")
+        else:
+            try:
+                self.raw1394 = CDLL("libraw1394.so.11", RTLD_GLOBAL)
+                # self.pthread = CDLL("libpthread.so.0", RTLD_GLOBAL) # python already loads libpthread
+                # TODO: shall we use  ctypes.util.find_library("pvcam")?
+                CDLL("libpvcam.so", RTLD_GLOBAL)
+            except OSError:
+                raise Exception("Failed to find the PVCam driver. You need to check that libraw1394 and libpvcam are "
+                                "installed.")
 
         self.pvcam.pl_pvcam_init()
 

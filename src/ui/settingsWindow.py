@@ -8,6 +8,7 @@
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 
+
 class Ui_Form(object):
     def setupUi(self, Form):
         Form.setObjectName("Form")
@@ -99,7 +100,7 @@ class Ui_Form(object):
         self.horizontalLayout.addWidget(self.toolButton)
         self.formLayout.setLayout(6, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout)
         self.buttonBox = QtWidgets.QDialogButtonBox(self.formLayoutWidget)
-        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.RestoreDefaults|QtWidgets.QDialogButtonBox.Save)
+        self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.RestoreDefaults | QtWidgets.QDialogButtonBox.Save)
         self.buttonBox.setCenterButtons(True)
         self.buttonBox.setObjectName("buttonBox")
         self.formLayout.setWidget(7, QtWidgets.QFormLayout.SpanningRole, self.buttonBox)
@@ -118,4 +119,3 @@ class Ui_Form(object):
         self.label_6.setText(_translate("Form", "Exposure Time:"))
         self.label_7.setText(_translate("Form", "Images Path"))
         self.toolButton.setText(_translate("Form", "..."))
-

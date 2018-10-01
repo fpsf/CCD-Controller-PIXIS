@@ -14,11 +14,15 @@ the camera settings class on src/saving/camera_settings.py
 
 import datetime
 
+from PyQt5 import QtCore
+
 from driver.pixis import CCDPixis
 from saving.camera_settings import CameraSettings
 
 
 class Actions(CCDPixis):
+
+    signal_console = QtCore.pyqtSignal(name="signalConsole")
 
     def __init__(self):
         super().__init__()
@@ -26,13 +30,28 @@ class Actions(CCDPixis):
         self.shoot_on = None
 
     def connect(self):
+        self.signal_console.emit("Connecting...", 2)
         super().open()
+        if not super()._error():
+            self.signal_console.emit("Connected Successfully.", 1)
+        else:
+            self.signal_console.emit("Connection Error...", 3)
 
     def disconnect(self):
+        self.signal_console.emit("Disconnecting...", 2)
         super().close()
+        if not super()._error():
+            self.signal_console.emit("Disconnected Successfully.", 1)
+        else:
+            self.signal_console.emit("Connection Error...", 3)
 
     def standby(self):
+        self.signal_console.emit("Entering Standby Mode...", 1)
         super().set_param(super().pv.PARAM_TEMP_SETPOINT, 2500)
+        # self.signal_console.emit("Success", 1)
+
+    def get_temp(self):
+        return super().get_param(super().pv.PARAM_TEMP)[1]
 
     def shoot(self):
         self.shoot_on = True
@@ -44,6 +63,8 @@ class Actions(CCDPixis):
         end_time = datetime.datetime.now() + datetime.timedelta(seconds=self.cs.time_shooting)
         while datetime.datetime.now() < end_time and self.shoot_on:
             super().take_picture(self.cs.binning, self.cs.exp, self.cs.path)
+        self.signal_console.emit("Shooting Finished.", 1)
+        self.standby()
 
     def stop(self):
         self.shoot_on = False
