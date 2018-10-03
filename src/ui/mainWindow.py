@@ -5,33 +5,36 @@
 # Created by: PyQt5 UI code generator 5.11.2
 #
 # WARNING! All changes made in this file will be lost!
+import os
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import QMessageBox
 
 from actions.actions import Actions
+from ui.settingsWindow import UiSelf
 
 
-class UiMainwindow(object):
+class UiMainwindow(QtWidgets.QMainWindow):
 
-    def setup_ui(self, main_window):
+    def setup_ui(self):
 
+        self.settings = UiSelf()
         self.actions = Actions()
         self.actions.signal_console.connect(self.write_to_console)
 
-        main_window.setObjectName("main_window")
-        main_window.resize(464, 268)
+        self.setObjectName("self")
+        self.resize(464, 268)
 
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         size_policy.setHorizontalStretch(0)
         size_policy.setVerticalStretch(0)
-        size_policy.setHeightForWidth(main_window.sizePolicy().hasHeightForWidth())
+        size_policy.setHeightForWidth(self.sizePolicy().hasHeightForWidth())
 
-        main_window.setSizePolicy(size_policy)
-        main_window.setWindowTitle("CCD Controller 3.0.0 (Pixis)")
+        self.setSizePolicy(size_policy)
+        self.setWindowTitle("CCD Controller 3.0.0 (Pixis)")
 
-        self.centralwidget = QtWidgets.QWidget(main_window)
+        self.centralwidget = QtWidgets.QWidget(self)
         self.centralwidget.setObjectName("centralwidget")
         self.verticalLayout = QtWidgets.QVBoxLayout(self.centralwidget)
         self.verticalLayout.setObjectName("verticalLayout")
@@ -39,8 +42,12 @@ class UiMainwindow(object):
         self.plainTextEdit.setEnabled(True)
 
         font = QtGui.QFont()
-        font.setFamily("Terminal")
-        font.setPointSize(11)
+        if os.name == "nt":
+            font.setFamily("Terminal")
+            font.setPointSize(11)
+        else:
+            font.setFamily("Noto")
+            font.setPointSize(11)
 
         self.plainTextEdit.setFont(font)
         self.plainTextEdit.viewport().setProperty("cursor", QtGui.QCursor(QtCore.Qt.ArrowCursor))
@@ -57,55 +64,56 @@ class UiMainwindow(object):
         self.plainTextEdit.setObjectName("plainTextEdit")
 
         self.verticalLayout.addWidget(self.plainTextEdit)
-        main_window.setCentralWidget(self.centralwidget)
-        self.toolBar = QtWidgets.QToolBar(main_window)
+        self.setCentralWidget(self.centralwidget)
+        self.toolBar = QtWidgets.QToolBar(self)
         self.toolBar.setMovable(False)
         self.toolBar.setIconSize(QtCore.QSize(48, 48))
         self.toolBar.setObjectName("toolBar")
-        main_window.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
+        self.addToolBar(QtCore.Qt.TopToolBarArea, self.toolBar)
 
-        self.actionConnect = QtWidgets.QAction(main_window)
+        self.actionConnect = QtWidgets.QAction(self)
         icon = QtGui.QIcon()
         icon.addPixmap(QtGui.QPixmap(":/icons/icons/Connect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionConnect.setIcon(icon)
         self.actionConnect.setObjectName("actionConnect")
         self.actionConnect.triggered.connect(self.actions.connect)
 
-        self.actionDisconnect = QtWidgets.QAction(main_window)
+        self.actionDisconnect = QtWidgets.QAction(self)
         icon1 = QtGui.QIcon()
         icon1.addPixmap(QtGui.QPixmap(":/icons/icons/Disconnect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDisconnect.setIcon(icon1)
         self.actionDisconnect.setObjectName("actionDisconnect")
         self.actionConnect.triggered.connect(self.actions.disconnect)
 
-        self.actionRun = QtWidgets.QAction(main_window)
+        self.actionRun = QtWidgets.QAction(self)
         icon2 = QtGui.QIcon()
         icon2.addPixmap(QtGui.QPixmap(":/icons/icons/Run_Manual.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionRun.setIcon(icon2)
         self.actionRun.setObjectName("actionRun")
         self.actionConnect.triggered.connect(self.actions.shoot)
 
-        self.actionStop = QtWidgets.QAction(main_window)
+        self.actionStop = QtWidgets.QAction(self)
         icon3 = QtGui.QIcon()
         icon3.addPixmap(QtGui.QPixmap(":/icons/icons/Stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionStop.setIcon(icon3)
         self.actionStop.setObjectName("actionStop")
         self.actionConnect.triggered.connect(self.actions.stop)
 
-        self.actionSettings = QtWidgets.QAction(main_window)
+        self.actionSettings = QtWidgets.QAction(self)
         icon4 = QtGui.QIcon()
         icon4.addPixmap(QtGui.QPixmap("icons/Settings.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSettings.setIcon(icon4)
         self.actionSettings.setObjectName("actionSettings")
+        self.actionSettings.triggered.connect(self.settings.setup_ui)
 
-        self.actionExit = QtWidgets.QAction(main_window)
+        self.actionExit = QtWidgets.QAction(self)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(":/icons/icons/Exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionExit.setIcon(icon5)
         self.actionExit.setObjectName("actionExit")
         self.actionExit.triggered.connect(self.closeEvent)
 
-        self.actionPicFolder = QtWidgets.QAction(main_window)
+        self.actionPicFolder = QtWidgets.QAction(self)
         self.actionPicFolder.setObjectName("actionPicFolder")
 
         self.toolBar.addAction(self.actionConnect)
@@ -119,10 +127,12 @@ class UiMainwindow(object):
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPicFolder)
 
-        self.retranslate_ui(main_window)
-        QtCore.QMetaObject.connectSlotsByName(main_window)
+        self.retranslate_ui()
+        QtCore.QMetaObject.connectSlotsByName(self)
 
-    def retranslate_ui(self, MainWindow):
+        self.show()
+
+    def retranslate_ui(self):
         _translate = QtCore.QCoreApplication.translate
         self.plainTextEdit.setPlaceholderText(_translate("MainWindow", "PlaceholderText"))
         self.toolBar.setWindowTitle(_translate("MainWindow", "toolBar"))
@@ -168,4 +178,4 @@ class UiMainwindow(object):
             event.ignore()
 
 
-# import pixis_rf_rc
+# import pixis_rf.qrc

@@ -55,14 +55,14 @@ class Actions(CCDPixis):
 
     def shoot(self):
         self.shoot_on = True
-        super().set_param(super().pv.PARAM_TEMP_SETPOINT, self.cs.temp * 100)
+        super().set_param(super().pv.PARAM_TEMP_SETPOINT, int(self.cs.temp) * 100)
         temp_wait = datetime.datetime.now() + datetime.timedelta(seconds=600)
-        while super().get_param(super().pv.PARAM_TEMP)[1] != self.cs.temp * 100 and datetime.datetime.now() < temp_wait:
+        while super().get_param(super().pv.PARAM_TEMP)[1] != int(self.cs.temp) * 100 and datetime.datetime.now() < temp_wait:
             continue
         # TODO Change time unit?
-        end_time = datetime.datetime.now() + datetime.timedelta(seconds=self.cs.time_shooting)
+        end_time = datetime.datetime.now() + datetime.timedelta(seconds=int(self.cs.time_shooting))
         while datetime.datetime.now() < end_time and self.shoot_on:
-            super().take_picture(self.cs.binning, self.cs.exp, self.cs.path)
+            super().take_picture(int(self.cs.binning), int(self.cs.exp), self.cs.path)
         self.signal_console.emit("Shooting Finished.", 1)
         self.standby()
 
