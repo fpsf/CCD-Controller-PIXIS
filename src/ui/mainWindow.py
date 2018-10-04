@@ -174,15 +174,20 @@ class UiMainwindow(QtWidgets.QMainWindow):
             self.close()
 
     def pics_folder(self):
+        try:
+            if not os.path.exists(self.actionsMenu.cs.path):
+                os.makedirs(self.actionsMenu.cs.path)
             if os.name == "nt":
                 os.startfile(self.actionsMenu.cs.path)
             else:
                 os.subprocess.Popen(["xdg-open", self.actionsMenu.cs.path])
-            # TODO Darwin?
-            """
-            elif os.name == "Darwin":
-                os.subprocess.Popen(["open", path])
-            """
+        except Exception as e:
+            self.console.write_to_console("Failed to open images folder: " + str(e), 3)
+        # TODO Darwin?
+        """
+        elif os.name == "Darwin":
+            os.subprocess.Popen(["open", path])
+        """
 
 
 # import pixis_rf.qrc

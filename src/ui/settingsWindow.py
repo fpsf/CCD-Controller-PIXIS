@@ -238,7 +238,7 @@ class UiSelf(QtWidgets.QWidget):
             self.actionsMenu.console.write_to_console("Settings saved successfully.", 1)
             self.close()
         except Exception as e:
-            self.actionsMenu.console.write_to_console("Failed to save settings: " + str(e), 1)
+            self.actionsMenu.console.write_to_console("Failed to save settings: " + str(e), 3)
 
     def defaults(self):
         self.comboBox.setCurrentIndex(self.default.gain)

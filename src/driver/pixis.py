@@ -41,6 +41,8 @@ import os
 
 import numpy
 from ctypes import *
+
+from actions.singleton import Singleton
 from driver.pvcam_h import *
 from driver import pvcam_h as pv
 
@@ -50,7 +52,7 @@ from PIL import Image
 # ### Required Python Modules.
 
 
-class CCDPixis:
+class CCDPixis(metaclass=Singleton):
     """
     Main class with methods built to interact with the PVCAM library.
 
@@ -72,7 +74,7 @@ class CCDPixis:
         """
         self.pv = pv
         self._hcam = None
-        self.pvcam = None
+
         try:
             if os.name == "nt":
                 self.pvcam = WinDLL("pvcam32")

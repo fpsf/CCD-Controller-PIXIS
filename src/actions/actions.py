@@ -41,8 +41,11 @@ class Actions(CCDPixis):
             try:
                 self.console.write_to_console("Connecting...", 0)
                 super().open()
-                self.console.write_to_console("Connected Successfully.", 1)
-                self.is_connected = True
+                if not super().error():
+                    self.console.write_to_console("Connected Successfully.", 1)
+                    self.is_connected = True
+                else:
+                    self.console.write_to_console("Failed to connect. PVCAM Error.", 3)
             except Exception as e:
                 self.console.write_to_console("Connection Error: " + str(e), 3)
 
@@ -53,8 +56,11 @@ class Actions(CCDPixis):
             try:
                 self.console.write_to_console("Disconnecting...", 0)
                 super().close()
-                self.console.write_to_console("Disconnected Successfully.", 1)
-                self.is_connected = False
+                if not super().error():
+                    self.console.write_to_console("Disconnected Successfully.", 1)
+                    self.is_connected = False
+                else:
+                    self.console.write_to_console("Failed to Disconnect. PVCAM Error.", 3)
             except Exception as e:
                 self.console.write_to_console("Connection Error: " + str(e), 3)
 

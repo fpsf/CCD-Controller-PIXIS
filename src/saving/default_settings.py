@@ -9,6 +9,6 @@ class DefaultSettings:
     binning = 1
     exp = 5
     if os.name == "nt":
-        path = "C:/Users/%USERNAME%/Pictures/CCD_Pixis"
+        path = "C:/Users/" + os.path.expandvars("%USERNAME%") + "/Pictures/CCD_Pixis"
     else:
         path = "~/Pictures/CCD_Pixis"
