@@ -14,8 +14,6 @@ the camera.ini settings class on src/saving/camera_settings.py
 
 import datetime
 
-from PyQt5 import QtCore
-
 from actions.console import ConsoleThreadOutput
 from driver.pixis import CCDPixis
 from saving.camera_settings import CameraSettings
@@ -23,13 +21,11 @@ from saving.camera_settings import CameraSettings
 
 class Actions(CCDPixis):
 
-    # signal_console = QtCore.pyqtSignal(str, int, name="signalConsole")
-
     def __init__(self):
         super().__init__()
-        # super() = CCDPixis()
-        # super().__init__()
         self.cs = CameraSettings()
+        self.cs.load_settings()
+        super().set_param(super().pv.PARAM_GAIN_INDEX, self.cs.gain + 1)
         self.shoot_on = None
         self.is_connected = False
         self.console = ConsoleThreadOutput()

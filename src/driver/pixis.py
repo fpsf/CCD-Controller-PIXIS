@@ -367,7 +367,7 @@ class CCDPixis(metaclass=Singleton):
         # SER == Serial
         # PAR == Parallel
         region.s1, region.s2, region.p1, region.p2 = (0, width.value - 1, 0, height.value - 1)
-        binning = b
+        binning = b + 1
         region.sbin, region.pbin = (binning, binning)
 
         if self.error():

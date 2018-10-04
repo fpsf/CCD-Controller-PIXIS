@@ -4,9 +4,14 @@ import os
 
 class CameraSettings:
     def __init__(self):
+
+        # These parameters must be set on pixis.py by controller class:
+
         self.gain = None
 
         self.temp = None
+
+        # These parameters must be set on pixis.py by controller class
 
         self.time_shooting = None
         self.acq_wait = None
