@@ -18,11 +18,11 @@ READING HIGHLY RECOMMENDED (PVCAM SDK User Manual):
     ftp://ftp.piacton.com/Public/Manuals/Princeton%20Instruments/PVCAM%202.7%20Software%20User%20Manual.pdf
 
 REMINDER:
-    The camera should be turned on for running the methods.
+    The camera.ini should be turned on for running the methods.
 
 ADDITIONAL USE REQUIREMENTS:
     * PIXIS, must allocate an even number of frame buffers.
-    * One must not turn off or disconnect the camera with the camera open.
+    * One must not turn off or disconnect the camera.ini with the camera.ini open.
     * One must not call other PVCAM parameters such as PARAM_TEMP to get the
      current temperature during data collection. Only functions or parameters
      designated as 'online' may be called.
@@ -48,7 +48,7 @@ class CCDPixis:
     These methods are structured in a class because most of the
     PVCAM library methods require the library itself to be loaded and
     a handle identifier to point respectively, to the library instance
-    and camera, currently being used.
+    and camera.ini, currently being used.
 
     All errors are returned through the self._error() call, to the
     protected _error(self) method, from this class.
@@ -73,8 +73,8 @@ class CCDPixis:
     """
     NOTE:
     The methods: scan Up To open; get data from the pvcam.ini file.
-    That's why they don't depend on an open camera to work properly.
-    Although open does require the camera to be connected to the system,
+    That's why they don't depend on an open camera.ini to work properly.
+    Although open does require the camera.ini to be connected to the system,
     for obvious reasons.
     """
 
@@ -183,11 +183,11 @@ class CCDPixis:
             Default: This is the default value of the given parameter.
 
             Minimum: This is the minimum value for the given parameter that the
-            camera can work with.
+            camera.ini can work with.
             An attempt to assign an inferior value returns an error.
 
             Maximum: This is the maximum value for the given parameter that the
-            camera can work with.
+            camera.ini can work with.
 
         This method should be called into a variable, so that its details can be
         revealed with the param_info method, unless CCDPixis.param_info(get_param(PARAMETER))

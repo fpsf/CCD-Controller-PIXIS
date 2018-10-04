@@ -8,7 +8,7 @@ This file contains a class with the methods to execute all of the program's poss
 in other words, this is the program's main controller.
 
 Said class requires methods from the PIXIS driver class in src/driver/pixis.py and
-the camera settings class on src/saving/camera_settings.py
+the camera.ini settings class on src/saving/camera_settings.py
 
 """
 

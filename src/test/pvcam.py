@@ -22,7 +22,7 @@ Odemis. If not, see http://www.gnu.org/licenses/.
 
 # This tries to support the PVCam SDK from Roper/Princeton Instruments/Photometrics.
 # However, the library is slightly different between the companies, and this has
-# only been tested on Linux for the PI PIXIS (USB) camera.
+# only been tested on Linux for the PI PIXIS (USB) camera.ini.
 #
 # Note that libpvcam is only provided for x86 32-bits
 
@@ -173,17 +173,17 @@ class PVCamDLL(CDLL):
 STATUS_IN_PROGRESS = (pv.ACQUISITION_IN_PROGRESS, pv.EXPOSURE_IN_PROGRESS,
                       pv.READOUT_IN_PROGRESS)
 
-# The only way I've found to detect the camera is not responding is to check for
-# weird camera temperature. However, it's pretty unreliable as depending on the
-# camera, the weird temperature is different.
+# The only way I've found to detect the camera.ini is not responding is to check for
+# weird camera.ini temperature. However, it's pretty unreliable as depending on the
+# camera.ini, the weird temperature is different.
 # It seems that the ST133 gives -120°C
-TEMP_CAM_GONE = 2550  # temperature value that hints that the camera is gone (PIXIS)
+TEMP_CAM_GONE = 2550  # temperature value that hints that the camera.ini is gone (PIXIS)
 
 
 class PVCam(model.DigitalCamera):
     """
-    Represents one PVCam camera and provides all the basic interfaces typical of
-    a CCD/CMOS camera.
+    Represents one PVCam camera.ini and provides all the basic interfaces typical of
+    a CCD/CMOS camera.ini.
     This implementation is for the Roper/PI/Photometrics PVCam library... or at
     least for the PI version.
 
@@ -192,23 +192,23 @@ class PVCam(model.DigitalCamera):
 
     Be aware that the library resets almost all the values to their default
     values after initialisation. The library doesn't call the dimensions
-    horizontal/vertical but serial/parallel (because the camera could be rotated).
+    horizontal/vertical but serial/parallel (because the camera.ini could be rotated).
     But we stick to: horizontal = serial (max = width - 1)
                      vertical = parallel (max = height - 1)
 
     Here area few more non-obvious requirements given by the PI technical
     support:
     * PIXIS, must allocate an even number of frame buffers.
-    * One must not turn off or disconnect the camera with the camera open.
+    * One must not turn off or disconnect the camera.ini with the camera.ini open.
     * One must not call other PVCAM parameters such as PARAM_TEMP to get the
      current temperature during data collection. Only functions or parameters
      designated as 'online' may be called.
     * Order dependency issue: can't turn on continuous clean before external
      sync (strobed mode) is enabled.
-    * InGaAs camera cannot do hardware binning
+    * InGaAs camera.ini cannot do hardware binning
 
     It offers mostly a couple of VigilantAttributes to modify the settings, and a
-    DataFlow to get one or several images from the camera.
+    DataFlow to get one or several images from the camera.ini.
 
     It also provides low-level methods corresponding to the SDK functions.
     """
@@ -223,7 +223,7 @@ class PVCam(model.DigitalCamera):
         self.pvcam = PVCamDLL()
 
         # TODO: allow device to be None, and have a chipname string parameter.
-        # If defined, the camera to open is the one reporting this chip name.
+        # If defined, the camera.ini to open is the one reporting this chip name.
         # Note that it might be slow with ST133's, which take 15s each to initialise
         model.DigitalCamera.__init__(self, name, role, **kwargs)  # name is stored as ._name
 
@@ -235,7 +235,7 @@ class PVCam(model.DigitalCamera):
             try:
                 self._devname = self.cam_get_name(device)  # for reinit
             except PVCamError:
-                raise HwError("Failed to find PI PVCam camera %s (%d)"
+                raise HwError("Failed to find PI PVCam camera.ini %s (%d)"
                               "Check the device is turned on and connected to "
                               "the computer. "
                               "You might need to turn it off and on again."
@@ -243,7 +243,7 @@ class PVCam(model.DigitalCamera):
         elif isinstance(device, str):
             # check the file exists
             if not os.path.exists("/dev/" + device):
-                raise HwError("Failed to find PI PVCam camera %s (at %s). "
+                raise HwError("Failed to find PI PVCam camera.ini %s (at %s). "
                               "Check the device is turned on and connected to "
                               "the computer. "
                               "You might need to turn it off and on again."
@@ -254,18 +254,18 @@ class PVCam(model.DigitalCamera):
 
         try:
             # TODO : can be ~15s for ST133: don't say anything on the PIXIS
-            logging.info("Initializing camera, can be long (~15 s)...")
+            logging.info("Initializing camera.ini, can be long (~15 s)...")
             self._handle = self.cam_open(self._devname, pv.OPEN_EXCLUSIVE)
-            # raises an error if camera has a problem
+            # raises an error if camera.ini has a problem
             self.pvcam.pl_cam_get_diags(self._handle)
         except PVCamError:
-            logging.info("PI camera seems connected but not responding, "
+            logging.info("PI camera.ini seems connected but not responding, "
                          "you might want to try turning it off and on again.")
-            raise IOError("Failed to open PVCam camera %s (%s)" % (device, self._devname))
+            raise IOError("Failed to open PVCam camera.ini %s (%s)" % (device, self._devname))
 
         logging.info("Opened device %s successfully", device)
 
-        # Describe the camera
+        # Describe the camera.ini
         # up-to-date metadata to be included in dataflow
         self._metadata = {model.MD_HW_NAME: self.getModelName()}
 
@@ -311,7 +311,7 @@ class PVCam(model.DigitalCamera):
             logging.debug("Camera doesn't seem to provide temperature information")
 
         # TODO: .fanSpeed? (but it seems PIXIS cannot change it anyway and LN
-        # camera don't have any)
+        # camera.ini don't have any)
 
         self._setStaticSettings()
 
@@ -447,8 +447,8 @@ class PVCam(model.DigitalCamera):
 
     def Reinitialize(self):
         """
-        Waits for the camera to reappear and reinitialise it. Typically
-        useful in case the user switched off/on the camera.
+        Waits for the camera.ini to reappear and reinitialise it. Typically
+        useful in case the user switched off/on the camera.ini.
         """
         # stop trying to read the temperature while we reinitialize
         if self._temp_timer is not None:
@@ -461,9 +461,9 @@ class PVCam(model.DigitalCamera):
             pass
         self._handle = None
 
-        # PVCam only update the camera list after uninit()/init()
+        # PVCam only update the camera.ini list after uninit()/init()
         while True:
-            logging.info("Waiting for the camera to reappear")
+            logging.info("Waiting for the camera.ini to reappear")
             self.pvcam.reinit()
             try:
                 self._handle = self.cam_open(self._devname, pv.OPEN_EXCLUSIVE)
@@ -472,7 +472,7 @@ class PVCam(model.DigitalCamera):
                 time.sleep(1)
 
         # reinitialise the sdk
-        logging.info("Trying to reinitialise the camera %s...", self._devname)
+        logging.info("Trying to reinitialise the camera.ini %s...", self._devname)
         try:
             self.pvcam.pl_cam_get_diags(self._handle)
         except PVCamError:
@@ -493,7 +493,7 @@ class PVCam(model.DigitalCamera):
     def cam_get_name(self, num):
         """
         return the name, from the device number
-        num (int >= 0): camera number
+        num (int >= 0): camera.ini number
         return (string): name
         """
         assert (num >= 0)
@@ -503,8 +503,8 @@ class PVCam(model.DigitalCamera):
 
     def cam_open(self, name, mode):
         """
-        Reserve and initializes the camera hardware
-        name (string): camera name
+        Reserve and initializes the camera.ini hardware
+        name (string): camera.ini name
         mode (int): open mode
         returns (int): handle
         """
@@ -669,7 +669,7 @@ class PVCam(model.DigitalCamera):
                     # read the firmware version inside the kernel)
                     pv.PARAM_PCI_FW_VERSION: "firmware board",
                     pv.PARAM_CAM_FW_FULL_VERSION: "firmware (full)",
-                    pv.PARAM_CAMERA_TYPE: "camera type",
+                    pv.PARAM_CAMERA_TYPE: "camera.ini type",
                     }
         ret = ""
         for pid, name in versions.items():
@@ -694,7 +694,7 @@ class PVCam(model.DigitalCamera):
         """
         returns (string): name of the camara
         """
-        model_name = "Princeton Instruments camera"
+        model_name = "Princeton Instruments camera.ini"
 
         try:
             model_name += " with CCD '%s'" % self.get_param(pv.PARAM_CHIP_NAME)
@@ -783,7 +783,7 @@ class PVCam(model.DigitalCamera):
         """
         if self._handle is None:
             # might happen if terminate() has just been called
-            logging.info("No temperature update, camera is stopped")
+            logging.info("No temperature update, camera.ini is stopped")
             return
 
         temp = self.GetTemperature()
@@ -923,10 +923,10 @@ class PVCam(model.DigitalCamera):
 
     def resolutionFitter(self, size_req):
         """
-        Finds a resolution allowed by the camera which fits best the requested
+        Finds a resolution allowed by the camera.ini which fits best the requested
           resolution.
         size_req (2-tuple of int): resolution requested
-        returns (2-tuple of int): resolution which fits the camera. It is equal
+        returns (2-tuple of int): resolution which fits the camera.ini. It is equal
          or bigger than the requested resolution
         """
         # find maximum resolution (with binning)
@@ -972,7 +972,7 @@ class PVCam(model.DigitalCamera):
 
     def _update_settings(self):
         """
-        Commits the settings to the camera. Only the settings which have been
+        Commits the settings to the camera.ini. Only the settings which have been
         modified are updated.
         Note: acquisition_lock must be taken, and acquisition must _not_ going on.
         returns (exposure, region, size):
@@ -1063,7 +1063,7 @@ class PVCam(model.DigitalCamera):
 
     def start_flow(self, callback):
         """
-        Set up the camera and acquireOne a flow of images at the best quality for the given
+        Set up the camera.ini and acquireOne a flow of images at the best quality for the given
           parameters. Should not be called if already a flow is being acquired.
         callback (callable (DataArray) no return):
          function called for each image acquired
@@ -1168,8 +1168,8 @@ class PVCam(model.DigitalCamera):
                         self.pvcam.pl_exp_finish_seq(self._handle, cbuffer, None)
                         self.pvcam.pl_exp_uninit_seq()
 
-                        # Always assume the "worse": the camera has been turned off
-                        self.Reinitialize()  # returns only once the camera is working again
+                        # Always assume the "worse": the camera.ini has been turned off
+                        self.Reinitialize()  # returns only once the camera.ini is working again
                         self._online_lock.acquire()
 
                         retries += 1
@@ -1196,7 +1196,7 @@ class PVCam(model.DigitalCamera):
         finally:
             # ending cleanly
 
-            # if end is soon, just wait for it (because the camera hates
+            # if end is soon, just wait for it (because the camera.ini hates
             # being aborted during the end of acquisition (ie, during readout?)
             left = expected_end - time.time()
             # proportional to readout
@@ -1235,7 +1235,7 @@ class PVCam(model.DigitalCamera):
 
     def _start_acquisition(self, cbuf):
         """
-        Triggers the start of the acquisition on the camera. If the DataFlow
+        Triggers the start of the acquisition on the camera.ini. If the DataFlow
          is synchronized, wait for the Event to be triggered.
         cbuf (ctype): buffer to contain the data
         raises CancelledError if the acquisition must stop
@@ -1333,7 +1333,7 @@ class PVCam(model.DigitalCamera):
             self.acquire_must_stop.set()
             self.wait_stopped_flow()
 
-            logging.debug("Shutting down the camera")
+            logging.debug("Shutting down the camera.ini")
             self.pvcam.pl_cam_close(self._handle)
             self._handle = None
             del self.pvcam
@@ -1343,7 +1343,7 @@ class PVCam(model.DigitalCamera):
 
     def selfTest(self):
         """
-        Check whether the connection to the camera works.
+        Check whether the connection to the camera.ini works.
         return (boolean): False if it detects any problem
         """
         # TODO: this is pretty weak, because if we've managed to init, all
@@ -1351,11 +1351,11 @@ class PVCam(model.DigitalCamera):
         try:
             resolution = self.GetSensorSize()
         except Exception as err:
-            logging.exception("Failed to read camera resolution: " + str(err))
+            logging.exception("Failed to read camera.ini resolution: " + str(err))
             return False
 
         try:
-            # raises an error if camera has a problem
+            # raises an error if camera.ini has a problem
             self.pvcam.pl_cam_get_diags(self._handle)
         except Exception as err:
             logging.exception("Camera reports a problem: " + str(err))
@@ -1383,9 +1383,9 @@ class PVCam(model.DigitalCamera):
             try:
                 pvcam.pl_cam_get_name(i, cam_name)
             except PVCamError:
-                logging.exception("Couldn't access camera %d", i)
+                logging.exception("Couldn't access camera.ini %d", i)
 
-            # TODO: append the resolution to the name of the camera?
+            # TODO: append the resolution to the name of the camera.ini?
             cameras.append((cam_name.value, {"device": i}))
 
         return cameras
@@ -1394,7 +1394,7 @@ class PVCam(model.DigitalCamera):
 class PVCamDataFlow(model.df):
     def __init__(self, camera):
         """
-        camera: PVCam instance ready to acquire images
+        camera.ini: PVCam instance ready to acquire images
         """
         model.df.__init__(self)
         self._sync_event = None  # synchronization Event
@@ -1402,7 +1402,7 @@ class PVCamDataFlow(model.df):
         self._prev_max_discard = self._max_discard
 
     #    def get(self):
-    #        # TODO if camera is already acquiring, subscribe and wait for the coming picture with an event
+    #        # TODO if camera.ini is already acquiring, subscribe and wait for the coming picture with an event
     #        # but we should make sure that VA have not been updated in between.
     #        data = self.component.acquireOne()
     #        # TODO we should avoid this: get() and acquire() simultaneously should be handled by the framework
@@ -1420,7 +1420,7 @@ class PVCamDataFlow(model.df):
     def start_generate(self):
         comp = self.component()
         if comp is None:
-            # camera has been deleted, it's all fine, we'll be GC'd soon
+            # camera.ini has been deleted, it's all fine, we'll be GC'd soon
             return
 
         comp.start_flow(self.notify)
