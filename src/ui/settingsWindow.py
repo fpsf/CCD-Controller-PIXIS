@@ -227,7 +227,6 @@ class UiSelf(QtWidgets.QWidget):
     def save_settings(self):
         try:
             self.cs.gain = str(self.comboBox.currentIndex())
-            self.actionsMenu.insert_to_driver()
             self.cs.temp = self.lineEdit.text()
             self.cs.time_shooting = self.lineEdit_2.text()
             self.cs.acq_wait = self.lineEdit_3.text()

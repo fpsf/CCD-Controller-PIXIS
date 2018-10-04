@@ -74,7 +74,6 @@ class CCDPixis(metaclass=Singleton):
         """
         self.pv = pv
         self._hcam = None
-
         try:
             if os.name == "nt":
                 self.pvcam = WinDLL("pvcam32")
@@ -87,6 +86,7 @@ class CCDPixis(metaclass=Singleton):
             self.error()
         except Exception as e:
             print("Library not found. " + str(e))
+            self.pvcam = None
 
     """
     NOTE:
