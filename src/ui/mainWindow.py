@@ -73,42 +73,42 @@ class UiMainwindow(QtWidgets.QMainWindow):
 
         self.actionConnect = QtWidgets.QAction(self)
         icon = QtGui.QIcon()
-        icon.addPixmap(QtGui.QPixmap(":/icons/icons/Connect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon.addPixmap(QtGui.QPixmap(os.getcwd() + "\\ui\\icons\\Connect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionConnect.setIcon(icon)
         self.actionConnect.setObjectName("actionConnect")
         self.actionConnect.triggered.connect(self.actions.connect)
 
         self.actionDisconnect = QtWidgets.QAction(self)
         icon1 = QtGui.QIcon()
-        icon1.addPixmap(QtGui.QPixmap(":/icons/icons/Disconnect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon1.addPixmap(QtGui.QPixmap(os.getcwd() + "\\ui\\icons\\Disconnect.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionDisconnect.setIcon(icon1)
         self.actionDisconnect.setObjectName("actionDisconnect")
         self.actionConnect.triggered.connect(self.actions.disconnect)
 
         self.actionRun = QtWidgets.QAction(self)
         icon2 = QtGui.QIcon()
-        icon2.addPixmap(QtGui.QPixmap(":/icons/icons/Run_Manual.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon2.addPixmap(QtGui.QPixmap(os.getcwd() + "\\ui\\icons\\Run_Manual.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionRun.setIcon(icon2)
         self.actionRun.setObjectName("actionRun")
         self.actionConnect.triggered.connect(self.actions.shoot)
 
         self.actionStop = QtWidgets.QAction(self)
         icon3 = QtGui.QIcon()
-        icon3.addPixmap(QtGui.QPixmap(":/icons/icons/Stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon3.addPixmap(QtGui.QPixmap(os.getcwd() + "\\ui\\icons\\Stop.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionStop.setIcon(icon3)
         self.actionStop.setObjectName("actionStop")
         self.actionConnect.triggered.connect(self.actions.stop)
 
         self.actionSettings = QtWidgets.QAction(self)
         icon4 = QtGui.QIcon()
-        icon4.addPixmap(QtGui.QPixmap("icons/Settings.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon4.addPixmap(QtGui.QPixmap(os.getcwd() + "\\ui\\icons\\Settings.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSettings.setIcon(icon4)
         self.actionSettings.setObjectName("actionSettings")
         self.actionSettings.triggered.connect(self.settings.setup_ui)
 
         self.actionExit = QtWidgets.QAction(self)
         icon5 = QtGui.QIcon()
-        icon5.addPixmap(QtGui.QPixmap(":/icons/icons/Exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        icon5.addPixmap(QtGui.QPixmap(os.getcwd() + "\\ui\\icons\\Exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionExit.setIcon(icon5)
         self.actionExit.setObjectName("actionExit")
         self.actionExit.triggered.connect(self.closeEvent)
@@ -169,10 +169,11 @@ class UiMainwindow(QtWidgets.QMainWindow):
         reply = QMessageBox.question(self, 'Message', "Are you sure to quit?",
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            if self.actions.shoot_on:
-                self.actions.stop()
-            while self.actions.get_temp() != 2500:
-                continue
+            if self.actions.is_connected:
+                if self.actions.shoot_on:
+                    self.actions.stop()
+                while self.actions.get_temp() != 2500:
+                    continue
             event.accept()
         else:
             event.ignore()

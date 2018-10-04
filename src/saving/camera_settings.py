@@ -20,7 +20,7 @@ class CameraSettings:
         self.load_settings()
 
     def load_settings(self):
-        self.config.read(os.getcwd() + "camera")
+        self.config.read(os.getcwd() + "\\saving\\camera")
         self.gain = self.config["Camera"]["Gain"]
         self.temp = self.config["Camera"]["Temperature"]
         self.time_shooting = self.config["Camera"]["ShootingTime"]
@@ -37,5 +37,5 @@ class CameraSettings:
         self.config["Camera"]["Binning"] = self.binning
         self.config["Camera"]["ExposureTime"] = self.exp
         self.config["Camera"]["ImagesPath"] = self.path
-        with open(os.getcwd() + "camera") as configfile:
+        with open(os.getcwd() + "\\saving\\camera") as configfile:
             self.config.write(configfile)
