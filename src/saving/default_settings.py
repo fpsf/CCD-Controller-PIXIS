@@ -1,3 +1,6 @@
+import os
+
+
 class DefaultSettings:
     gain = 2
     temp = -70
@@ -5,4 +8,7 @@ class DefaultSettings:
     acq_wait = 15
     binning = 1
     exp = 5
-    path = "C:/Users/user/Pictures/testes_pixis"
+    if os.name == "nt":
+        path = "C:/Users/%USERNAME%/Pictures/CCD_Pixis"
+    else:
+        path = "~/Pictures/CCD_Pixis"

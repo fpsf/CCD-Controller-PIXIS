@@ -41,8 +41,8 @@ class CameraSettings:
         self.config["Camera"]["ExposureTime"] = self.exp
         self.config["Camera"]["ImagesPath"] = self.path
         if os.name == "nt":
-            with open(os.getcwd() + "\\saving\\camera.ini") as configfile:
+            with open(os.getcwd() + "\\saving\\camera.ini", 'w') as configfile:
                 self.config.write(configfile)
         else:
-            with open(os.getcwd() + "\\saving\\camera.ini") as configfile:
+            with open(os.getcwd() + "/saving/camera.ini", 'w') as configfile:
                 self.config.write(configfile)
