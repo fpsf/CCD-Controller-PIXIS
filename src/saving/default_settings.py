@@ -11,4 +11,4 @@ class DefaultSettings:
     if os.name == "nt":
         path = "C:/Users/" + os.path.expandvars("%USERNAME%") + "/Pictures/CCD_Pixis"
     else:
-        path = "~/Pictures/CCD_Pixis"
+        path = os.path.expandvars("$HOME") + "/CCD_Pixis"

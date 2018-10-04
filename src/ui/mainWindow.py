@@ -6,6 +6,7 @@
 #
 # WARNING! All changes made in this file will be lost!
 import os
+import subprocess
 
 from PyQt5 import QtCore, QtGui, QtWidgets
 from PyQt5.QtCore import pyqtSlot
@@ -180,7 +181,7 @@ class UiMainwindow(QtWidgets.QMainWindow):
             if os.name == "nt":
                 os.startfile(self.actionsMenu.cs.path)
             else:
-                os.subprocess.Popen(["xdg-open", self.actionsMenu.cs.path])
+                subprocess.Popen(["xdg-open", self.actionsMenu.cs.path])
         except Exception as e:
             self.console.write_to_console("Failed to open images folder: " + str(e), 3)
         # TODO Darwin?
@@ -188,6 +189,3 @@ class UiMainwindow(QtWidgets.QMainWindow):
         elif os.name == "Darwin":
             os.subprocess.Popen(["open", path])
         """
-
-
-# import pixis_rf.qrc
