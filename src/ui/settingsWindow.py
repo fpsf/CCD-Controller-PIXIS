@@ -179,7 +179,7 @@ class UiSelf(QtWidgets.QWidget):
         self.toolButton = QtWidgets.QToolButton(self.selfLayoutWidget)
         self.toolButton.setObjectName("toolButton")
         self.horizontalLayout.addWidget(self.toolButton)
-        self.toolButton.triggered.connect(self.get_dir)
+        self.toolButton.clicked.connect(self.get_dir)
 
         self.selfLayout.setLayout(6, QtWidgets.QFormLayout.FieldRole, self.horizontalLayout)
 
@@ -220,9 +220,10 @@ class UiSelf(QtWidgets.QWidget):
         self.toolButton.setText(_translate("self", "..."))
 
     def get_dir(self):
-        imgs_dir = QtWidgets.QFileDialog()
+        dialog = QtWidgets.QFileDialog()
+        imgs_dir = dialog.getExistingDirectory(None, "Select Folder")
         self.lineEdit_5.setText(str(imgs_dir))
-        self.path = imgs_dir
+        self.path = str(imgs_dir)
 
     def save_settings(self):
         try:
