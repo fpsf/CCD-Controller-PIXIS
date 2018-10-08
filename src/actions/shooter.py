@@ -37,13 +37,15 @@ class Shooter(QtCore.QThread):
             temp_wait = datetime.datetime.now() + datetime.timedelta(seconds=600)
             self.console.write_to_console("Waiting for Camera Temperature to be " + str(self.cs.temp), 0)
             time.sleep(1)
-            while self.driver.get_param(self.driver.pv.PARAM_TEMP)[1] / 100 != int(self.cs.temp) and datetime.datetime.now() < temp_wait:
+            while (self.driver.get_param(self.driver.pv.PARAM_TEMP)[1] != int(self.cs.temp) * 100 and
+                   datetime.datetime.now() < temp_wait) and self.shoot_on:
                 # self.console.write_to_console(str(self.driver.get_param(self.driver.pv.PARAM_TEMP)[1] / 100), 0)
                 # time.sleep(1)
                 continue
             # TODO Change time unit?
-            self.console.write_to_console("Initiating Acquisition...", 0)
-            time.sleep(1)
+            if self.shoot_on:
+                self.console.write_to_console("Initiating Acquisition...", 0)
+                time.sleep(1)
             end_time = datetime.datetime.now() + datetime.timedelta(seconds=int(self.cs.time_shooting))
             pic_counter = 1
 
