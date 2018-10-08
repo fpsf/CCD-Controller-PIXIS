@@ -9,8 +9,6 @@ import os
 import subprocess
 
 from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtCore import pyqtSlot
-from PyQt5.QtGui import QTextCursor
 from PyQt5.QtWidgets import QMessageBox
 
 from actions.actions import Actions
@@ -28,7 +26,7 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.console = ConsoleThreadOutput()
 
         self.setObjectName("self")
-        self.setFixedSize(464, 268)
+        self.setFixedSize(470, 268)
 
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         size_policy.setHorizontalStretch(0)
@@ -115,18 +113,22 @@ class UiMainwindow(QtWidgets.QMainWindow):
         icon4.addPixmap(QtGui.QPixmap(dir_orientation + "Settings.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionSettings.setIcon(icon4)
         self.actionSettings.setObjectName("actionSettings")
-        self.actionSettings.triggered.connect(self.settings.setup_ui)
+        self.actionSettings.triggered.connect(self.open_settings)
 
         self.actionExit = QtWidgets.QAction(self)
         icon5 = QtGui.QIcon()
         icon5.addPixmap(QtGui.QPixmap(dir_orientation + "Exit.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
         self.actionExit.setIcon(icon5)
         self.actionExit.setObjectName("actionExit")
-        self.actionExit.triggered.connect(self.closeEvent)
+        self.actionExit.triggered.connect(self.close)
 
         self.actionPicFolder = QtWidgets.QAction(self)
         self.actionPicFolder.setObjectName("actionPicFolder")
         self.actionPicFolder.triggered.connect(self.pics_folder)
+
+        self.actionGetTemp = QtWidgets.QAction(self)
+        self.actionGetTemp.setObjectName("actionGetTemp")
+        self.actionGetTemp.triggered.connect(self.show_temp)
 
         self.toolBar.addAction(self.actionConnect)
         self.toolBar.addAction(self.actionDisconnect)
@@ -138,6 +140,8 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.toolBar.addAction(self.actionExit)
         self.toolBar.addSeparator()
         self.toolBar.addAction(self.actionPicFolder)
+        self.toolBar.addAction(self.actionGetTemp)
+        self.toolBar.addSeparator()
 
         self.retranslate_ui()
         QtCore.QMetaObject.connectSlotsByName(self)
@@ -160,19 +164,38 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.actionSettings.setToolTip(_translate("MainWindow", "Settings"))
         self.actionExit.setText(_translate("MainWindow", "Exit"))
         self.actionExit.setToolTip(_translate("MainWindow", "Exit"))
+        '''
         self.actionPicFolder.setText(_translate("MainWindow", "PicFolder"))
+        '''
         self.actionPicFolder.setToolTip(_translate("MainWindow", "Open Pictures Folder"))
+        self.actionGetTemp.setToolTip(_translate("MainWindow", "Get Current Temperature"))
+
+    def open_settings(self):
+        if not self.actionsMenu.shooter.shoot_on:
+            self.settings.setup_ui()
+        else:
+            self.console.write_to_console("Cannot Change Settings During Acquisition.", 2)
+
+    def show_temp(self):
+        if self.actionsMenu.is_connected:
+            self.console.write_to_console("Current Temperature: " +
+                                          "{0:.2f}".format(self.actionsMenu.get_temp() / 100, 0), 0)
+        else:
+            self.console.write_to_console("Not Connected.", 2)
 
     def closeEvent(self, event):
         reply = QMessageBox.question(self, 'Message', "Are you sure to quit?",
                                      QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             if self.actionsMenu.is_connected:
-                if self.actionsMenu.shoot_on:
+                if self.actionsMenu.shooter.shoot_on:
                     self.actionsMenu.stop()
-                while self.actionsMenu.get_temp() != 2500:
+                while self.actionsMenu.shooter.shoot_on:
                     continue
-            self.close()
+            # self.close()
+            event.accept()
+        else:
+            event.ignore()
 
     def pics_folder(self):
         try:
