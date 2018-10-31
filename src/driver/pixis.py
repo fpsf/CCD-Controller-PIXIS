@@ -79,11 +79,8 @@ class CCDPixis(metaclass=Singleton):
                 self.pvcam = WinDLL("pvcam32")
             else:
                 self.raw1394 = CDLL("libraw1394.so.11", RTLD_GLOBAL)
-                # self.pthread = CDLL("libpthread.so.0", RTLD_GLOBAL) # python already loads libpthread
                 # TODO: shall we use  ctypes.util.find_library("pvcam")?
-                CDLL("libpvcam.so", RTLD_GLOBAL)
-            self.pvcam.pl_pvcam_init()
-            self.error()
+                self.pvcam = CDLL("libpvcam.so", RTLD_GLOBAL)
         except Exception as e:
             print("Library not found. " + str(e))
             self.pvcam = None

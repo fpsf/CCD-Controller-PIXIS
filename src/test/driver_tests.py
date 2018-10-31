@@ -30,10 +30,12 @@ ADDITIONAL USE REQUIREMENTS:
 """
 
 # ### Required Python Modules:
+import os
 
 import numpy
 from ctypes import *
-from test.pvcam_h import *
+# from test.pvcam_h import *
+from driver.pvcam_h import *
 
 # This one is called 'Pillow'.
 from PIL import Image
@@ -62,13 +64,24 @@ class CCDPixis:
         in which case all the methods will return errors.
         """
         self._hcam = None
-        self.pvcam = WinDLL("pvcam32")
+
+        try:
+            if os.name == "nt":
+                self.pvcam = WinDLL("pvcam32")
+            else:
+                self.raw1394 = CDLL("libraw1394.so.11", RTLD_GLOBAL)
+                # TODO: shall we use  ctypes.util.find_library("pvcam")?
+                self.pvcam = CDLL("libpvcam.so", RTLD_GLOBAL)
+        except Exception as e:
+            print("Library not found. " + str(e))
+            self.pvcam = None
 
         print("Opening Library...")
 
         self.pvcam.pl_pvcam_init()
 
-        self._error()
+        if not self.error():
+            print("OK.")
 
     """
     NOTE:
@@ -84,7 +97,7 @@ class CCDPixis:
         cams_total = c_int16()
         self.pvcam.pl_cam_get_total(byref(cams_total))
 
-        if not self._error():
+        if not self.error():
             return cams_total.value
 
     # TODO Deprecated?
@@ -94,7 +107,7 @@ class CCDPixis:
         cam_name = create_string_buffer(CAM_NAME_LEN)
         cam_id = self.pvcam.pl_cam_get_name(0, cam_name)
 
-        if not self._error():
+        if not self.error():
             return cam_id, cam_name.value.decode()
 
     def version(self):
@@ -108,7 +121,7 @@ class CCDPixis:
         ver.insert(0, raw.value & 0x0f)  # next 4 bits = minor version
         raw.value >>= 4
         ver.insert(0, raw.value & 0xff)  # highest 8 bits = major version
-        if not self._error():
+        if not self.error():
             return '.'.join(str(x) for x in ver)
             # return raw.value
         '''
@@ -132,7 +145,7 @@ class CCDPixis:
         ver.insert(0, raw.value & 0x0f)  # next 4 bits = minor version
         raw.value >>= 4
         ver.insert(0, raw.value & 0xff)  # highest 8 bits = major version
-        if not self._error():
+        if not self.error():
             return '.'.join(str(x) for x in ver)
             # return raw.value
 
@@ -141,14 +154,14 @@ class CCDPixis:
 
         cam_name = create_string_buffer(CAM_NAME_LEN)
         self.pvcam.pl_cam_get_name(0, cam_name)
-        if self._error():
+        if self.error():
             return
 
         cam_name = c_char_p(cam_name.value)
         self._hcam = c_int16()
         self.pvcam.pl_cam_open(cam_name, byref(self._hcam), OPEN_EXCLUSIVE)
 
-        if not self._error():
+        if not self.error():
             print(self._hcam.value)
 
     """
@@ -208,7 +221,7 @@ class CCDPixis:
 
         type_catcher = c_int32()
         self.pvcam.pl_get_param(self._hcam, req_param, ATTR_ACCESS, byref(type_catcher))
-        if self._error():
+        if self.error():
             return
         if type_catcher.value == ACC_READ_WRITE:
             ret.append(1)
@@ -222,7 +235,7 @@ class CCDPixis:
         # This method must search for parameter type in order to return its proper value.
         type_catcher = c_uint32()
         self.pvcam.pl_get_param(self._hcam, req_param, ATTR_TYPE, byref(type_catcher))
-        if self._error():
+        if self.error():
             return
         if type_catcher.value == TYPE_CHAR_PTR:
             # A string, must obtain its length.
@@ -239,22 +252,22 @@ class CCDPixis:
             return
 
         self.pvcam.pl_get_param(self._hcam, req_param, ATTR_CURRENT, byref(content))
-        if self._error():
+        if self.error():
             return
         ret.append(content.value)
 
         self.pvcam.pl_get_param(self._hcam, req_param, ATTR_DEFAULT, byref(content))
-        if self._error():
+        if self.error():
             return
         ret.append(content.value)
 
         self.pvcam.pl_get_param(self._hcam, req_param, ATTR_MIN, byref(content))
-        if self._error():
+        if self.error():
             return
         ret.append(content.value)
 
         self.pvcam.pl_get_param(self._hcam, req_param, ATTR_MAX, byref(content))
-        if self._error():
+        if self.error():
             return
         ret.append(content.value)
 
@@ -308,7 +321,7 @@ class CCDPixis:
         content = c_int32(value)
         self.pvcam.pl_set_param(self._hcam, req_param, byref(content))
 
-        if not self._error():
+        if not self.error():
             print(str(req_param) + "'s Value Set To: " + str(value))
 
     def enum_available(self, enum_param):
@@ -320,7 +333,7 @@ class CCDPixis:
         """
         count = c_uint32()
         self.pvcam.pl_get_param(self._hcam, enum_param, ATTR_COUNT, byref(count))
-        if self._error():
+        if self.error():
             return
 
         ret = {}  # int -> str
@@ -328,16 +341,16 @@ class CCDPixis:
             length = c_uint32()
             content = c_uint32()
             self.pvcam.pl_enum_str_length(self._hcam, enum_param, i, byref(length))
-            if self._error():
+            if self.error():
                 return
             desc = create_string_buffer(length.value)
             self.pvcam.pl_get_enum_param(self._hcam, enum_param, i, byref(content),
                                          desc, length)
-            if self._error():
+            if self.error():
                 return
             ret[content.value] = desc.value
 
-        if not self._error():
+        if not self.error():
             return ret
 
     def take_picture(self):
@@ -368,7 +381,7 @@ class CCDPixis:
         binning = 2
         region.sbin, region.pbin = (binning, binning)
 
-        if self._error():
+        if self.error():
             return
 
         # ############################################## STEP 2.1 ###################################################
@@ -380,7 +393,7 @@ class CCDPixis:
         self.pvcam.pl_exp_setup_seq(self._hcam, 1, 1, byref(region), TIMED_MODE, exp_ms, byref(buffer_length))
         # empty c_ushort_Array_1048576
         frame_buffer = (c_uint16 * buffer_length.value)()
-        if self._error():
+        if self.error():
             return
 
         # ############################################## STEP 2.2 ###################################################
@@ -398,7 +411,7 @@ class CCDPixis:
 
         if status.value == READOUT_FAILED:
             self.pvcam.pl_exp_abort(self._hcam, CCS_CLEAR)
-            self._error()
+            self.error()
             return
 
         # ############################################## STEP 3 ####################################################
@@ -420,16 +433,16 @@ class CCDPixis:
         tiff_to_save.write_file(r"C:\\Users\\user\Pictures\testes_pixis\a")
         """
 
-        self._error()
+        self.error()
 
     def close(self):
         print("Closing Camera...")
 
         self.pvcam.pl_cam_close(self._hcam)
 
-        self._error()
+        self.error()
 
-    def _error(self):
+    def error(self):
         """
         This method gets the latest error code, message and meaning, from the last attempted method.
         It also works even before the library is initialized, which is when:
