@@ -46,7 +46,7 @@ class UiSelf(QtWidgets.QWidget):
         self.comboBox.setObjectName("comboBox")
 
         # TODO ?(x2, x4, x8)?
-        self.comboBox.addItems([self.tr("1"), self.tr("2"), self.tr("3")])
+        self.comboBox.addItems([self.tr("1"), self.tr("2"), self.tr("4")])
         self.comboBox.setCurrentIndex(int(self.cs.gain))
 
         # Gain
@@ -133,7 +133,7 @@ class UiSelf(QtWidgets.QWidget):
         self.comboBox_2.setMinimumContentsLength(0)
         self.comboBox_2.setObjectName("comboBox_2")
 
-        self.comboBox_2.addItems([self.tr("1x1"), self.tr("2x2"), self.tr("3x3")])
+        self.comboBox_2.addItems([self.tr("1x1"), self.tr("2x2"), self.tr("4x4")])
         self.comboBox_2.setCurrentIndex(int(self.cs.binning))
 
         # Binning

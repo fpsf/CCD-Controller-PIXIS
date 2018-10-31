@@ -26,7 +26,7 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.console = ConsoleThreadOutput()
 
         self.setObjectName("self")
-        self.setFixedSize(470, 268)
+        self.setFixedSize(500, 268)
 
         size_policy = QtWidgets.QSizePolicy(QtWidgets.QSizePolicy.Fixed, QtWidgets.QSizePolicy.Fixed)
         size_policy.setHorizontalStretch(0)
@@ -123,10 +123,16 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(self.close)
 
         self.actionPicFolder = QtWidgets.QAction(self)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(dir_orientation + "Folder.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPicFolder.setIcon(icon6)
         self.actionPicFolder.setObjectName("actionPicFolder")
         self.actionPicFolder.triggered.connect(self.pics_folder)
 
         self.actionGetTemp = QtWidgets.QAction(self)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(dir_orientation + "Temp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionGetTemp.setIcon(icon7)
         self.actionGetTemp.setObjectName("actionGetTemp")
         self.actionGetTemp.triggered.connect(self.show_temp)
 
@@ -180,6 +186,8 @@ class UiMainwindow(QtWidgets.QMainWindow):
         if self.actionsMenu.is_connected:
             self.console.write_to_console("Current Temperature: " +
                                           "{0:.2f}".format(self.actionsMenu.get_temp() / 100, 0), 0)
+        elif self.actionsMenu.shooter.shoot_on:
+            self.console.write_to_console("Unavailable During Acquisition.", 2)
         else:
             self.console.write_to_console("Not Connected.", 2)
 
