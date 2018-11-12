@@ -30,6 +30,7 @@ ADDITIONAL USE REQUIREMENTS:
 """
 
 # ### Required Python Modules:
+import math
 
 import numpy
 from ctypes import *
@@ -375,7 +376,7 @@ class CCDPixis:
 
         print("Preparing Image Buffer...")
         buffer_length = c_uint32()
-        exp_ms = 0.1 * 1e3  # ms (1.0 == s)
+        exp_ms = int(math.ceil(0.1 * 1e3))  # ms (1.0 == s)
         self.pvcam.pl_exp_init_seq()
         self.pvcam.pl_exp_setup_seq(self._hcam, 1, 1, byref(region), TIMED_MODE, exp_ms, byref(buffer_length))
         # empty c_ushort_Array_1048576
@@ -484,6 +485,7 @@ tests.open()
 print("\n")
 print("############################### READING PARAMETERS... ###################################")
 print("\n")
+
 reads = []
 for param in params_to_read:
     reads.append(tests.get_param(param))
@@ -492,6 +494,11 @@ print("\n")
 for elems in range(0, len(reads)):
     tests.param_info(reads[elems])
     print("\n")
+
+tests.take_picture()
+print("\n")
+
+print("\n")
 print("################################ PARAMETERS READ ########################################")
 print("\n")
 tests.close()

@@ -37,6 +37,7 @@ NOTE:
 
 # ### Required Python Modules:
 import datetime
+import math
 import os
 
 import numpy
@@ -376,7 +377,7 @@ class CCDPixis(metaclass=Singleton):
         # ############################################## STEP 2.1 ###################################################
 
         buffer_length = c_uint32()
-        exp_ms = exp * 1e3  # ms (1.0 == s)
+        exp_ms = int(math.ceil(exp * 1e3))  # ms (1.0 == s)
         self.pvcam.pl_exp_init_seq()
         self.pvcam.pl_exp_setup_seq(self._hcam, 1, 1, byref(region), TIMED_MODE, exp_ms, byref(buffer_length))
         # empty c_ushort_Array_1048576
@@ -413,7 +414,13 @@ class CCDPixis(metaclass=Singleton):
         now = datetime.datetime.now()
         name = now.strftime("%Y-%m-%d_%H:%M:%S")
         im3 = Image.fromarray(ndbuffer)
-        im3.save(path + name + ".tif")
+
+        if os.name == "nt":
+            rp = path.replace("/", "\\")
+            im3.save(rp + "\\" + name + ".tif")
+        else:
+            im3.save(path + "/" + name + ".tif")
+
 
         """
         tiff_to_save = TIFFimage(obj)

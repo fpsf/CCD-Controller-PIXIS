@@ -30,6 +30,7 @@ class Shooter(QtCore.QThread):
 
             # ########################################## Preparations: ##############################################
 
+            # self.cs.load_settings()
             self.console.write_to_console("Preparing Acquisition...", 0)
             time.sleep(1)
             self.shoot_on = True
@@ -46,14 +47,15 @@ class Shooter(QtCore.QThread):
             if self.shoot_on:
                 self.console.write_to_console("Initiating Acquisition...", 0)
                 time.sleep(1)
+
             start_time = datetime.datetime.now()
             end_time = start_time + datetime.timedelta(seconds=int(self.cs.time_shooting))
             pic_counter = 1
 
             # ########################################## Preparations ##############################################
 
-            while start_time < end_time and self.shoot_on:
-                self.driver.take_picture(int(self.cs.binning), int(self.cs.exp), self.cs.path)
+            while datetime.datetime.now() < end_time and self.shoot_on:
+                self.driver.take_picture(int(self.cs.binning), float(self.cs.exp), self.cs.path)
                 if not self.driver.error():
                     self.console.write_to_console("\n", 1)
                     self.console.write_to_console("Image nº: " + str(pic_counter) + "Acquired.", 1)
@@ -69,7 +71,8 @@ class Shooter(QtCore.QThread):
                     self.console.write_to_console("Aborting...", 3)
                     self.shoot_on = False
             self.console.write_to_console("Shooting Finished.", 1)
-            self.standby()
+            if not self.shoot_on:
+                self.standby()
 
         except Exception as e:
             self.console.write_to_console("Shooting Failed: " + str(e), 3)

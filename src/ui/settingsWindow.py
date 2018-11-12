@@ -15,6 +15,7 @@ from saving.default_settings import DefaultSettings
 
 class UiSelf(QtWidgets.QWidget):
 
+    # TODO Improve Textbox Limiters
     def setup_ui(self):
         self.setObjectName("self")
         self.setFixedSize(287, 235)
@@ -154,7 +155,7 @@ class UiSelf(QtWidgets.QWidget):
         sizePolicy.setHeightForWidth(self.lineEdit_4.sizePolicy().hasHeightForWidth())
         self.lineEdit_4.setSizePolicy(sizePolicy)
         self.lineEdit_4.setObjectName("lineEdit_4")
-        self.lineEdit_4.setValidator(QtGui.QIntValidator(5, 60))
+        # self.lineEdit_4.setValidator(QtGui.QIntValidator(5, 60))
         self.lineEdit_4.setText(self.cs.exp)
 
         # Exposure Time
@@ -215,7 +216,7 @@ class UiSelf(QtWidgets.QWidget):
         self.label_3.setText(_translate("self", "Shooting Time (s):"))
         self.label_4.setText(_translate("self", "Time Between Images (s):"))
         self.label_5.setText(_translate("self", "Binning:"))
-        self.label_6.setText(_translate("self", "Exposure Time:"))
+        self.label_6.setText(_translate("self", "Exposure Time (s):"))
         self.label_7.setText(_translate("self", "Images Path"))
         self.toolButton.setText(_translate("self", "..."))
 
