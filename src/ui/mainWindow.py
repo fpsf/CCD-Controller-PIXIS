@@ -123,12 +123,19 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.actionExit.triggered.connect(self.close)
 
         self.actionPicFolder = QtWidgets.QAction(self)
+        icon6 = QtGui.QIcon()
+        icon6.addPixmap(QtGui.QPixmap(dir_orientation + "Folder.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionPicFolder.setIcon(icon6)
         self.actionPicFolder.setObjectName("actionPicFolder")
         self.actionPicFolder.triggered.connect(self.pics_folder)
 
         self.actionGetTemp = QtWidgets.QAction(self)
+        icon7 = QtGui.QIcon()
+        icon7.addPixmap(QtGui.QPixmap(dir_orientation + "Temp.png"), QtGui.QIcon.Normal, QtGui.QIcon.Off)
+        self.actionGetTemp.setIcon(icon7)
         self.actionGetTemp.setObjectName("actionGetTemp")
         self.actionGetTemp.triggered.connect(self.show_temp)
+
 
         self.toolBar.addAction(self.actionConnect)
         self.toolBar.addAction(self.actionDisconnect)
