@@ -33,7 +33,7 @@ ADDITIONAL USE REQUIREMENTS:
 
 import numpy
 from ctypes import *
-from test.pvcam_h import *
+from driver.pvcam_h import *
 
 # This one is called 'Pillow'.
 from PIL import Image

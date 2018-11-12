@@ -46,12 +46,13 @@ class Shooter(QtCore.QThread):
             if self.shoot_on:
                 self.console.write_to_console("Initiating Acquisition...", 0)
                 time.sleep(1)
-            end_time = datetime.datetime.now() + datetime.timedelta(seconds=int(self.cs.time_shooting))
+            start_time = datetime.datetime.now()
+            end_time = start_time + datetime.timedelta(seconds=int(self.cs.time_shooting))
             pic_counter = 1
 
             # ########################################## Preparations ##############################################
 
-            while datetime.datetime.now() < end_time and self.shoot_on:
+            while start_time < end_time and self.shoot_on:
                 self.driver.take_picture(int(self.cs.binning), int(self.cs.exp), self.cs.path)
                 if not self.driver.error():
                     self.console.write_to_console("\n", 1)
