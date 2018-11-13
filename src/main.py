@@ -7,7 +7,7 @@ from ui.mainWindow import UiMainwindow
 try:
     app = QtWidgets.QApplication(sys.argv)
     '''
-    acessa a classe mainWindow/main.py para criacao da interface
+    acessa a classe mainWindow/testmain.py para criacao da interface
     '''
     ex = UiMainwindow()
     ex.setup_ui()

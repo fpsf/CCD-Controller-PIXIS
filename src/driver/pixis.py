@@ -412,15 +412,10 @@ class CCDPixis(metaclass=Singleton):
         ndbuffer = numpy.ctypeslib.as_array(p, (height.value // binning, width.value // binning))  # numpy shape is H, W
         print(ndbuffer)
         now = datetime.datetime.now()
-        name = now.strftime("%Y-%m-%d_%H:%M:%S")
+        name = now.strftime("%Y-%m-%d_%H-%M-%S")
         im3 = Image.fromarray(ndbuffer)
 
-        if os.name == "nt":
-            rp = path.replace("/", "\\")
-            im3.save(rp + "\\" + name + ".tif")
-        else:
-            im3.save(path + "/" + name + ".tif")
-
+        im3.save(path + "/" + name + ".tif")
 
         """
         tiff_to_save = TIFFimage(obj)

@@ -17,6 +17,17 @@ from ui.settingsWindow import UiSelf
 
 
 class UiMainwindow(QtWidgets.QMainWindow):
+    message = "This application is probably in prototype stage, " \
+              "so it may display flaws in a regular basis.\n\n" \
+              "The ideal way to use this application, that is, without experiencing crashes, " \
+              "as of now, is that before doing anything, the program should be closed, and the " \
+              "CCD camera should be manually turned on and off.\n\n" \
+              "When returning to he program, to make a successful connection, " \
+              "the user should make sure that " \
+              "the camera's temperature " \
+              "is equal to or next to 25ºC.\n\n" \
+              "After that, the program should be restarted, and then, only the 'Connect' and 'Run' " \
+              "buttons should be clicked for a successful acquisition cycle."
 
     def setup_ui(self):
 
@@ -136,7 +147,6 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.actionGetTemp.setObjectName("actionGetTemp")
         self.actionGetTemp.triggered.connect(self.show_temp)
 
-
         self.toolBar.addAction(self.actionConnect)
         self.toolBar.addAction(self.actionDisconnect)
         self.toolBar.addSeparator()
@@ -154,6 +164,8 @@ class UiMainwindow(QtWidgets.QMainWindow):
         QtCore.QMetaObject.connectSlotsByName(self)
 
         self.show()
+
+        QtWidgets.QMessageBox.about(self, "CCD Controller 3.0.0 (Pixis)", self.message)
 
     def retranslate_ui(self):
         _translate = QtCore.QCoreApplication.translate
@@ -178,15 +190,18 @@ class UiMainwindow(QtWidgets.QMainWindow):
         self.actionGetTemp.setToolTip(_translate("MainWindow", "Get Current Temperature"))
 
     def open_settings(self):
-        if not self.actionsMenu.shooter.shoot_on:
+        if not self.actionsMenu.shooter.isRunning():
             self.settings.setup_ui()
         else:
-            self.console.write_to_console("Cannot Change Settings During Acquisition.", 2)
+            self.console.write_to_console("Unavailable During Acquisition.", 2)
 
     def show_temp(self):
         if self.actionsMenu.is_connected:
-            self.console.write_to_console("Current Temperature: " +
-                                          "{0:.2f}".format(self.actionsMenu.get_temp() / 100, 0), 0)
+            if self.actionsMenu.shooter.isRunning():
+                self.console.write_to_console("Unavailable during acquisition.", 2)
+            else:
+                self.console.write_to_console("Current Temperature: " +
+                                              "{0:.2f}".format(self.actionsMenu.get_temp() / 100, 0), 0)
         else:
             self.console.write_to_console("Not Connected.", 2)
 
