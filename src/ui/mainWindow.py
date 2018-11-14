@@ -165,7 +165,7 @@ class UiMainwindow(QtWidgets.QMainWindow):
 
         self.show()
 
-        QtWidgets.QMessageBox.about(self, "CCD Controller 3.0.0 (Pixis)", self.message)
+        # QtWidgets.QMessageBox.about(self, "CCD Controller 3.0.0 (Pixis)", self.message)
 
     def retranslate_ui(self):
         _translate = QtCore.QCoreApplication.translate
@@ -198,10 +198,10 @@ class UiMainwindow(QtWidgets.QMainWindow):
     def show_temp(self):
         if self.actionsMenu.is_connected:
             if self.actionsMenu.shooter.isRunning():
-                self.console.write_to_console("Unavailable during acquisition.", 2)
+                self.console.write_to_console("Unavailable During Acquisition.", 2)
             else:
                 self.console.write_to_console("Current Temperature: " +
-                                              "{0:.2f}".format(self.actionsMenu.get_temp() / 100, 0), 0)
+                                              "{0:.2f}".format(self.actionsMenu.get_temp() / 100, 0) + " (C)", 0)
         else:
             self.console.write_to_console("Not Connected.", 2)
 
